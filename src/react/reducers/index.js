@@ -1,16 +1,21 @@
 import { combineReducers } from 'redux';
-import busket from '../reducers/busketReducer';
-import isActiveBusket from '../reducers/isActiveReducers';
 import gallery from './galleryReducer'
-import priceBusket from './priceBusketReducer';
-import totalBusket from './totalBusketReducer';
+import beerpage from './beerPageReducer';
+import foodform from './foodFormReducer';
+
+import {randomProduct} from './randomReducer';
+import {sliderReducer} from "./sliderReducer";
+import favorites from './favoriteReducer';
+import mobMenuExpanded from './mobileMenuReducer';
 
 const rootReducer = combineReducers ({
-    busket,
-    isActiveBusket: isActiveBusket,
     gallery,
-    priceBusket,
-    // totalBusket,
+    beerpage,
+    foodform,
+    randomProduct,
+    sliderReducer,
+    favorites,
+    mobMenuExpanded,
 });
 
 export default rootReducer;

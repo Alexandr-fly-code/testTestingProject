@@ -1,60 +1,68 @@
 import React from 'react';
-import styles from './Card.css';
+import { NavLink } from 'react-router-dom';
+import star from './star.svg';
+import starActive from './starActive.svg';
+import {toggleFavorite} from '../../react/actions/favoriteActions';
 import {connect} from 'react-redux';
-import {addToBasket, countAdd, countUnAdd, price, countDelete, total} from '../../react/actions/busketActions';
-import {priceBusket} from '../../react/actions/priceBusketAction';
-
-// import {totals} from '../../react/actions/totalBusketActions';
+import styles from './Card.css';
 
 
-const Card = ({name, img, price, count, countUnAdd, countAdd, priceBusket, priceBuskets, totalPriceBusket, countDelete}) => {
+const Card = (props) => {
+    const toggleFav = () => {
+       props.favouriteToggle([props.randomProduct, ...props.gallery].find(el => el.id === props.id));
+    };
+
+    const isFav = (id) => {
+        return props.favorites.some(el => el.id === +id)
+    };
+
     return (
-        <div className={styles.items}>
-        <div className={styles.first}>
-        <span onClick={() => countDelete(81)} className={styles.delete}>&times;</span> 
-            <img src={img} className={styles.img}/>
-            <span className={styles.name}>{name}</span>
-        </div>
-        <div className={styles.second}>
-            <button onClick={() => countUnAdd(81)} className={styles.cartBtn}>-</button>
-            <span className={styles.count}>{count}</span>
-            <button onClick={() => countAdd(81)} className={styles.cartBtn}>+</button>
-            {/* <p className={styles.price}>Price : ${busketTotal}</p> */}
-         </div>   
+        <div className={styles.beerCard}>
+
+            {isFav(props.id)
+                ? <img src={starActive} alt="favourite" className={styles.star} onClick={toggleFav}/> //favouriteOff
+                : <img src={star} alt="favourite" className={styles.star} onClick={toggleFav}/> // favouriteOn
+            }
+
+            <div className={styles.imgCont}>
+                <img src={props.img} alt="beer" className={styles.bottleImg}/>
+                <div className={styles.overlay}>
+                    <p className={styles.desc}>
+                    {props.description.substring(0,280)+ '...'}</p>
+                </div>
+            </div>
+
+            <div className={styles.spanCont}>
+                <span className={styles.name}>{props.name}</span>
+                <span className={styles.abv}>ABV: {props.abv}%</span>
+                <span className={styles.price}>{props.price} UAH</span>
+            </div>
+
+            <div className={styles.btnCont}>
+                <NavLink to={`/beerPage/${props.name}`}>
+                    <button className={styles.moreBtn}>More...</button>
+                </NavLink>
+                <button className={styles.cartBtn}
+                >ADD TO CART</button>
+            </div>
         </div>
     );
-}
+};
 
-
-function MSTP (state) {
+function MSTP(state) {
     return {
-        beers: state.gallery,
-        busket: state.busket,
-        priceBuskets: state.priceBusket,
-        // totals: state.totalBusket,
+        gallery: state.gallery,
+        favorites: state.favorites,
+        randomProduct: state.randomProduct,
     }
 }
 
 function MDTP (dispatch) {
     return {
-        
-        countAdd: function (id) {
-            dispatch(countAdd(id))
-        },
-        countUnAdd : function (id) {
-            dispatch(countUnAdd(id))
-        },
-        priceBusket: function (price, count){
-            dispatch(priceBusket(price, count))
-        },
-        countDelete : function(id) {
-            dispatch(countDelete(id))
-        },
-        // totals: function (price) {
-        //     dispatch(totals(price))
-        // }
-       
-       
+        favouriteToggle: function(prod) {
+            dispatch(toggleFavorite(prod))
+        }
     }
 }
-export default connect(MSTP, MDTP)(Card);
+
+export default  connect(MSTP, MDTP) (Card);
